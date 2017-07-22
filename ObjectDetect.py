@@ -4,17 +4,32 @@
 import time
 import Robot
 import RPi.GPIO as GPIO
-
+#Sensor intitialization
 GPIO.setmode(GPIO.BCM)
 
+#Right Sensor
 TRIG = 23
 ECHO = 24
-
-print("Distance Measurement In Progress... ")
 
 GPIO.setup(TRIG, GPIO.OUT)
 GPIO.setup(ECHO, GPIO.IN)
 GPIO.output(TRIG, False)
+#Left Sensor
+TRIGL
+ECHOL
+
+GPIO.setup(TRIGL, GPIO.OUT)
+GPIO.setup(ECHOL, GPIO.IN)
+GPIO.output(TRIGL, False)
+#Forward Sensor
+TRIGF
+ECHOF
+
+GPIO.setup(TRIGF, GPIO.OUT)
+GPIO.setup(ECHOF, GPIO.IN)
+GPIO.output(TRIGF, False)
+
+print("Distance Measurement In Progress... ")
 
 print("Waiting For Sensor To Settle")
 time.sleep(2)
@@ -22,6 +37,7 @@ time.sleep(2)
 #Adjust motor offset so wheels turn at same speed
 LEFT_TRIM = 0
 RIGHT_TRIM = -2
+
 #Create robot object to use functions from Robot class
 robot = Robot.Robot(left_trim = LEFT_TRIM, right_trim = RIGHT_TRIM,left_id = 1, right_id = 3)
             
@@ -44,7 +60,6 @@ def distance():
     distance = round(distance,2)
     #print(distance)
     return distance
-
 
 def follow():
     length = distance()
