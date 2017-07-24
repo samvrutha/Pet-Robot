@@ -8,22 +8,22 @@ import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 
 #Right Sensor
-TRIG = 23
-ECHO = 24
+TRIGR = 23
+ECHOR = 24
 
-GPIO.setup(TRIG, GPIO.OUT)
-GPIO.setup(ECHO, GPIO.IN)
-GPIO.output(TRIG, False)
+GPIO.setup(TRIGR, GPIO.OUT)
+GPIO.setup(ECHOR, GPIO.IN)
+GPIO.output(TRIGR, False)
 #Left Sensor
-TRIGL
-ECHOL
+TRIGL = 20
+ECHOL = 21
 
 GPIO.setup(TRIGL, GPIO.OUT)
 GPIO.setup(ECHOL, GPIO.IN)
 GPIO.output(TRIGL, False)
 #Forward Sensor
-TRIGF
-ECHOF
+TRIGF = 17
+ECHOF = 18
 
 GPIO.setup(TRIGF, GPIO.OUT)
 GPIO.setup(ECHOF, GPIO.IN)
@@ -40,19 +40,20 @@ RIGHT_TRIM = -2
 
 #Create robot object to use functions from Robot class
 robot = Robot.Robot(left_trim = LEFT_TRIM, right_trim = RIGHT_TRIM,left_id = 1, right_id = 3)
-            
-def distance():
+
+#Calculate distance to object in front of the sensor           
+def distance(trigger,echo):
    #Emit 10 usec pulse
-    GPIO.output(TRIG,True)
+    GPIO.output(trigger,True)
     time.sleep(0.00001)
-    GPIO.output(TRIG,False)
+    GPIO.output(trigger,False)
 
     pulse_start = time.time()
     pulse_end = time.time()
     #Record time for return echo
-    while GPIO.input(ECHO)== 0:
+    while GPIO.input(echo)== 0:
         pulse_start = time.time()       
-    while GPIO.input(ECHO)== 1:
+    while GPIO.input(echo)== 1:
         pulse_end = time.time()
 
     pulse_duration = pulse_end - pulse_start
@@ -62,22 +63,24 @@ def distance():
     return distance
 
 def follow():
-    length = distance()
+    lengthf = distance(TRIGF,ECHOF)
+    lengthr = distance(TRIGR,ECHOR)
+    lengthl = distance(TRIGL, ECHOL)
     try:
         while True:
-            while length > 20:
+            while lengthf > 20:
                 robot.forward(150)
                 length = 0
                 for x in range(2):
-                    length =(length + distance())/2.0
+                    lengthf =(lengthf + distance(TRIGF, ECHOF))/2.0
                 print("ONWARD")
                 print(length)
                 time.sleep(.05)
-            while length <= 20 or length >= 200:
+            while lengthf <= 20 or lengthf >= 200:
                 robot.stop()
                 length = 0
                 for x in range(2):
-                    length = (length + distance())/2.0
+                    lengthf = (lengthf + distance())/2.0
                 print(length)
                 time.sleep(.05)
     except KeyboardInterrupt:
