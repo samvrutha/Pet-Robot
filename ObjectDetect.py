@@ -87,19 +87,42 @@ def follow():
         robot.stop()
         print("Robot stopped by user")
        
+def followrl():
+    distf = distance(TRIGF, ECHOF)
+    distr = distance(TRIGR, ECHOR)
+    distl - distance(TRIGL, ECHOL)
+    while  True:
+        if distf > 20 and distr > 200 and distl > 200 :
+            robot.forward(150))
+        elif distr < 30 and distr > 4and distf > 10:
+            robot.right(150)
+        elif distl < 30 and distl > 4 and distf > 10:
+            robot.left(150)
+        
+        for x in range(2):                                   
+            distf =(distf + distance(TRIGF, ECHOF))/2.0
+            distr =(distr + distance(TRIGR, ECHOR))/2.0
+            distl =(distl + distance(TRIGL, ECHOL))/2.0
+                
 
 if __name__ == '__main__':
     try:
         print("Measuring")
         while True:
-            dist = distance()
+            #dist = distance(TRIGF, ECHOF)
+           # distr= distance(TRIGR, ECHOR)
+            distl = distance(TRIGL, ECHOL)
+                
             time.sleep(.5)
-            if dist <= 20:
-                follow()
-                dist = distance()
-                print("Measured Distance = %.1f cm" % dist)
-                time.sleep(.5)
+           # if dist <= 20:
+           #     follow()
+           #     dist = distance()
+           #     print("Measured Distance = %.1f cm" % dist)
+           #     time.sleep(.5)
+           # print("FORWARD DISTANCE:  %.1f cm \t RIGHT DISTANCE: %.1f cm \t LEFT DISTANCE: %.1f cm"  %(dist ,distr, distl) )
 
+            print("LEFT DISTANCE: %.1f cm" %distl)
+            
     except KeyboardInterrupt:
         print("Measurement stopped by User")
         GPIO.cleanup()
