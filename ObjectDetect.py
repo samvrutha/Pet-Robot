@@ -8,22 +8,22 @@ import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 
 #Right Sensor
-TRIGR = 23
-ECHOR = 24
+TRIGR = 22
+ECHOR = 23
 
 GPIO.setup(TRIGR, GPIO.OUT)
 GPIO.setup(ECHOR, GPIO.IN)
 GPIO.output(TRIGR, False)
 #Left Sensor
-TRIGL = 20
-ECHOL = 21
+TRIGL = 19
+ECHOL = 20
 
 GPIO.setup(TRIGL, GPIO.OUT)
 GPIO.setup(ECHOL, GPIO.IN)
 GPIO.output(TRIGL, False)
 #Forward Sensor
-TRIGF = 17
-ECHOF = 18
+TRIGF = 5
+ECHOF = 6
 
 GPIO.setup(TRIGF, GPIO.OUT)
 GPIO.setup(ECHOF, GPIO.IN)
@@ -36,7 +36,7 @@ time.sleep(2)
 
 #Adjust motor offset so wheels turn at same speed
 LEFT_TRIM = 0
-RIGHT_TRIM = -2
+RIGHT_TRIM = -1
 
 #Create robot object to use functions from Robot class
 robot = Robot.Robot(left_trim = LEFT_TRIM, right_trim = RIGHT_TRIM,left_id = 1, right_id = 3)
@@ -87,41 +87,47 @@ def follow():
         robot.stop()
         print("Robot stopped by user")
        
-def followrl():
-    distf = distance(TRIGF, ECHOF)
-    distr = distance(TRIGR, ECHOR)
-    distl - distance(TRIGL, ECHOL)
+def followrl(distf,distr,distl):
+    y = 1
     while  True:
-        if distf > 20 and distr > 200 and distl > 200 :
-            robot.forward(150))
-        elif distr < 30 and distr > 4and distf > 10:
-            robot.right(150)
-        elif distl < 30 and distl > 4 and distf > 10:
-            robot.left(150)
-        
-        for x in range(2):                                   
-            distf =(distf + distance(TRIGF, ECHOF))/2.0
-            distr =(distr + distance(TRIGR, ECHOR))/2.0
-            distl =(distl + distance(TRIGL, ECHOL))/2.0
+        if distf > 20 and distr > 50 and distl > 50 :
+            robot.forward(125)
+            print("FORWARD")
+        elif distr < 50 and distr > 4 and distf > 10:
+            robot.right(125)
+            print("RIGHT")
+        elif distl < 50 and distl > 4 and distf > 10:
+            robot.left(125)
+            print("LEFT")
+        else:
+            robot.stop()
+            print("STOP")
+        distf, distr,distl  = 0,0,0
+        for x in range(y):
+            distf =(distf + distance(TRIGF, ECHOF))/y
+            distr =(distr + distance(TRIGR, ECHOR))/y
+            distl =(distl + distance(TRIGL, ECHOL))/y
+        print("FORWARD DISTANCE:  %.1f cm \t RIGHT DISTANCE: %.1f cm \t LEFT DISTANCE: %.1f cm"  %(distf ,distr, distl) )
                 
 
 if __name__ == '__main__':
     try:
         print("Measuring")
-        while True:
-            #dist = distance(TRIGF, ECHOF)
-           # distr= distance(TRIGR, ECHOR)
+        dist = distance(TRIGF, ECHOF)
+        distr= distance(TRIGR, ECHOR)
+        distl = distance(TRIGL, ECHOL)
+       #Measure distance but do not move until initialized
+        while dist > 20:
+            dist = distance(TRIGF, ECHOF)
+            distr= distance(TRIGR, ECHOR)   
             distl = distance(TRIGL, ECHOL)
-                
-            time.sleep(.5)
-           # if dist <= 20:
-           #     follow()
-           #     dist = distance()
-           #     print("Measured Distance = %.1f cm" % dist)
-           #     time.sleep(.5)
-           # print("FORWARD DISTANCE:  %.1f cm \t RIGHT DISTANCE: %.1f cm \t LEFT DISTANCE: %.1f cm"  %(dist ,distr, distl) )
+            print("FORWARD DISTANCE:  %.1f cm \t RIGHT DISTANCE: %.1f cm \t LEFT DISTANCE: %.1f cm"  %(dist ,distr, distl) )
+            time.sleep(1)
 
-            print("LEFT DISTANCE: %.1f cm" %distl)
+           
+        followrl(dist, distr, distl)
+                
+
             
     except KeyboardInterrupt:
         print("Measurement stopped by User")
