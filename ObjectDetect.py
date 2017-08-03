@@ -25,6 +25,10 @@ GPIO.output(TRIGL, False)
 TRIGF = 5
 ECHOF = 6
 
+#PIR Sensor
+PIR = 16
+GPIO.setup(PIR,GPIO.IN)
+
 GPIO.setup(TRIGF, GPIO.OUT)
 GPIO.setup(ECHOF, GPIO.IN)
 GPIO.output(TRIGF, False)
@@ -57,67 +61,52 @@ def distance(trigger,echo):
         pulse_end = time.time()
 
     pulse_duration = pulse_end - pulse_start
-    distance = pulse_duration * 17150
-    distance = round(distance,2)
+    dist = pulse_duration * 17150
+    dist = round(dist,2)
     #print(distance)
-    return distance
+    return dist
 
-def follow():
-    lengthf = distance(TRIGF,ECHOF)
-    lengthr = distance(TRIGR,ECHOR)
-    lengthl = distance(TRIGL, ECHOL)
-    try:
-        while True:
-            while lengthf > 20:
-                robot.forward(150)
-                length = 0
-                for x in range(2):
-                    lengthf =(lengthf + distance(TRIGF, ECHOF))/2.0
-                print("ONWARD")
-                print(length)
-                time.sleep(.05)
-            while lengthf <= 20 or lengthf >= 200:
-                robot.stop()
-                length = 0
-                for x in range(2):
-                    lengthf = (lengthf + distance())/2.0
-                print(length)
-                time.sleep(.05)
-    except KeyboardInterrupt:
-        robot.stop()
-        print("Robot stopped by user")
-       
+#Continuously maintain a constant distance from object until user quits program     
 def followrl(distf,distr,distl):
     y = 1
-    while  True:
-        if distf > 20 and distr > 50 and distl > 50 :
-            robot.forward(125)
-            print("FORWARD")
-        elif distr < 50 and distr > 4 and distf > 10:
-            robot.right(125)
-            print("RIGHT")
-        elif distl < 50 and distl > 4 and distf > 10:
-            robot.left(125)
-            print("LEFT")
-        else:
-            robot.stop()
-            print("STOP")
-        distf, distr,distl  = 0,0,0
-        for x in range(y):
-            distf =(distf + distance(TRIGF, ECHOF))/y
-            distr =(distr + distance(TRIGR, ECHOR))/y
-            distl =(distl + distance(TRIGL, ECHOL))/y
-        print("FORWARD DISTANCE:  %.1f cm \t RIGHT DISTANCE: %.1f cm \t LEFT DISTANCE: %.1f cm"  %(distf ,distr, distl) )
-                
+    while True:
+        while  person:
+            if distf > 20 and distr > 50 and distl > 50 :
+                robot.forward(150)
+                print("FORWARD")
+            elif distr < 50 and distr > 4 and distf > 10:
+                robot.right(125)
+                print("RIGHT")
+            elif distl < 50 and distl > 4 and distf > 10:
+                robot.left(125)
+                print("LEFT")
+            else:
+                robot.stop()
+                print("STOP")
+            distf, distr,distl  = 0,0,0
+            for x in range(y):
+                distf =(distf + distance(TRIGF, ECHOF))/y
+                distr =(distr + distance(TRIGR, ECHOR))/y
+                distl =(distl + distance(TRIGL, ECHOL))/y
+            print("FORWARD DISTANCE:  %.1f cm \t RIGHT DISTANCE: %.1f cm \t LEFT DISTANCE: %.1f cm \t PIR: %d"  %(distf ,distr, distl, person) )       
+        robot.stop()
+        distf =(distf + distance(TRIGF, ECHOF))
+        distr =(distr + distance(TRIGR, ECHOR))
+        distl =(distl + distance(TRIGL, ECHOL))
 
+
+
+#Begin using robot by standing at a distance less than 20 cm. Robot will follow until program is escaped
 if __name__ == '__main__':
     try:
         print("Measuring")
         dist = distance(TRIGF, ECHOF)
         distr= distance(TRIGR, ECHOR)
         distl = distance(TRIGL, ECHOL)
+        person = GPIO.input(PIR)
        #Measure distance but do not move until initialized
-        while dist > 20:
+
+        while dist > 20 and not person:
             dist = distance(TRIGF, ECHOF)
             distr= distance(TRIGR, ECHOR)   
             distl = distance(TRIGL, ECHOL)
@@ -129,7 +118,7 @@ if __name__ == '__main__':
                 
 
             
-    except KeyboardInterrupt:
+    finally:
         print("Measurement stopped by User")
         GPIO.cleanup()
 
