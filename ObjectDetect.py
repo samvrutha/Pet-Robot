@@ -70,29 +70,28 @@ def distance(trigger,echo):
 def followrl(distf,distr,distl):
     y = 1
     while True:
-        while  person:
-            if distf > 20 and distr > 50 and distl > 50 :
-                robot.forward(150)
-                print("FORWARD")
-            elif distr < 50 and distr > 4 and distf > 10:
-                robot.right(125)
-                print("RIGHT")
-            elif distl < 50 and distl > 4 and distf > 10:
-                robot.left(125)
-                print("LEFT")
-            else:
-                robot.stop()
-                print("STOP")
-            distf, distr,distl  = 0,0,0
-            for x in range(y):
-                distf =(distf + distance(TRIGF, ECHOF))/y
-                distr =(distr + distance(TRIGR, ECHOR))/y
-                distl =(distl + distance(TRIGL, ECHOL))/y
-            print("FORWARD DISTANCE:  %.1f cm \t RIGHT DISTANCE: %.1f cm \t LEFT DISTANCE: %.1f cm \t PIR: %d"  %(distf ,distr, distl, person) )       
-        robot.stop()
+        if distf > 20 and distr > 50 and distl > 50 :
+            robot.forward(150)
+            print("FORWARD")
+        elif distr < 50 and distr > 4 and distf > 10:
+            robot.right(125)
+            print("RIGHT")
+        elif distl < 50 and distl > 4 and distf > 10:
+            robot.left(125)
+            print("LEFT")
+        else:
+            robot.stop()
+            print("STOP")
+        distf, distr,distl  = 0,0,0
+        for x in range(y):
+            distf =(distf + distance(TRIGF, ECHOF))/y
+            distr =(distr + distance(TRIGR, ECHOR))/y
+            distl =(distl + distance(TRIGL, ECHOL))/y
+        print("FORWARD DISTANCE:  %.1f cm \t RIGHT DISTANCE: %.1f cm \t LEFT DISTANCE: %.1f cm"  %(distf ,distr, distl) )       
         distf =(distf + distance(TRIGF, ECHOF))
         distr =(distr + distance(TRIGR, ECHOR))
         distl =(distl + distance(TRIGL, ECHOL))
+        
 
 
 
@@ -103,10 +102,9 @@ if __name__ == '__main__':
         dist = distance(TRIGF, ECHOF)
         distr= distance(TRIGR, ECHOR)
         distl = distance(TRIGL, ECHOL)
-        person = GPIO.input(PIR)
        #Measure distance but do not move until initialized
-
-        while dist > 20 and not person:
+        
+        while dist > 20:
             dist = distance(TRIGF, ECHOF)
             distr= distance(TRIGR, ECHOR)   
             distl = distance(TRIGL, ECHOL)
@@ -116,11 +114,12 @@ if __name__ == '__main__':
            
         followrl(dist, distr, distl)
                 
-
-            
     finally:
         print("Measurement stopped by User")
+        robot.stop()
         GPIO.cleanup()
+            
+    
 
 
 
