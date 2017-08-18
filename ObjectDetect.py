@@ -4,30 +4,34 @@
 import time
 import Robot
 import RPi.GPIO as GPIO
+from Adafruit_AMG88xx import Adafruit_AMG88xx 
 #Sensor intitialization
 GPIO.setmode(GPIO.BCM)
 
-#Right Sensor
+#Thermal Sensor initialization
+tempsens =Adafruit_AMG88xx()
+
+#Right Ultrasound Sensor
 TRIGR = 22
 ECHOR = 23
 
 GPIO.setup(TRIGR, GPIO.OUT)
 GPIO.setup(ECHOR, GPIO.IN)
 GPIO.output(TRIGR, False)
-#Left Sensor
+#Left Ultrasound  Sensor
 TRIGL = 19
 ECHOL = 20
 
 GPIO.setup(TRIGL, GPIO.OUT)
 GPIO.setup(ECHOL, GPIO.IN)
 GPIO.output(TRIGL, False)
-#Forward Sensor
+#Forward Ultrasound Sensor
 TRIGF = 5
 ECHOF = 6
 
 #PIR Sensor
-PIR = 16
-GPIO.setup(PIR,GPIO.IN)
+#PIR = 16
+#GPIO.setup(PIR,GPIO.IN)
 
 GPIO.setup(TRIGF, GPIO.OUT)
 GPIO.setup(ECHOF, GPIO.IN)
@@ -35,7 +39,7 @@ GPIO.output(TRIGF, False)
 
 print("Distance Measurement In Progress... ")
 
-print("Waiting For Sensor To Settle")
+print("Waiting For Sensors To Settle")
 time.sleep(2)
 
 #Adjust motor offset so wheels turn at same speed
@@ -66,11 +70,19 @@ def distance(trigger,echo):
     #print(distance)
     return dist
 
+# Returns the average temperature of objects found in the center of the IR camera's viewing range
+def getTemp():
+    tempa = tempsens.readPixels()
+    average = (tempa[28]+tempa[29]+tempa[36]+tempa[37]+tempa[44]+tempa[45])/6
+    print("Average temp is: %.2f " %average)
+    return average
+
+
 #Continuously maintain a constant distance from object until user quits program     
 def followrl(distf,distr,distl):
     y = 1
     while True:
-        if distf > 20 and distr > 50 and distl > 50 :
+        if distf > 20 and distr > 50 and distl > 50 and getTemp()>28 :
             robot.forward(150)
             print("FORWARD")
         elif distr < 50 and distr > 4 and distf > 10:
@@ -103,12 +115,14 @@ if __name__ == '__main__':
         distr= distance(TRIGR, ECHOR)
         distl = distance(TRIGL, ECHOL)
        #Measure distance but do not move until initialized
+        human = getTemp()
         
-        while dist > 20:
+        while dist > 20 and human <  28:
             dist = distance(TRIGF, ECHOF)
             distr= distance(TRIGR, ECHOR)   
             distl = distance(TRIGL, ECHOL)
             print("FORWARD DISTANCE:  %.1f cm \t RIGHT DISTANCE: %.1f cm \t LEFT DISTANCE: %.1f cm"  %(dist ,distr, distl) )
+            human = getTemp()
             time.sleep(1)
 
            
