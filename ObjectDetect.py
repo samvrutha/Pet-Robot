@@ -9,7 +9,7 @@ from Adafruit_AMG88xx import Adafruit_AMG88xx
 GPIO.setmode(GPIO.BCM)
 
 #Thermal Sensor initialization
-tempsens =Adafruit_AMG88xx()
+tempsens = Adafruit_AMG88xx()
 
 #Right Ultrasound Sensor
 TRIGR = 22
@@ -47,21 +47,21 @@ LEFT_TRIM = 0
 RIGHT_TRIM = -1
 
 #Create robot object to use functions from Robot class
-robot = Robot.Robot(left_trim = LEFT_TRIM, right_trim = RIGHT_TRIM,left_id = 1, right_id = 3)
+robot = Robot.Robot(left_trim = LEFT_TRIM, right_trim = RIGHT_TRIM, left_id = 1, right_id = 3)
 
 #Calculate distance to object in front of the sensor           
-def distance(trigger,echo):
+def distance(trigger, echo):
    #Emit 10 usec pulse
-    GPIO.output(trigger,True)
+    GPIO.output(trigger, True)
     time.sleep(0.00001)
-    GPIO.output(trigger,False)
+    GPIO.output(trigger, False)
 
     pulse_start = time.time()
     pulse_end = time.time()
     #Record time for return echo
-    while GPIO.input(echo)== 0:
+    while GPIO.input(echo) == 0:
         pulse_start = time.time()       
-    while GPIO.input(echo)== 1:
+    while GPIO.input(echo) == 1:
         pulse_end = time.time()
 
     pulse_duration = pulse_end - pulse_start
@@ -74,15 +74,15 @@ def distance(trigger,echo):
 def getTemp():
     tempa = tempsens.readPixels()
     average = (tempa[28]+tempa[29]+tempa[36]+tempa[37]+tempa[44]+tempa[45])/6
-    print("Average temp is: %.2f " %average)
+    print("Average temp is: %.2f " % average)
     return average
 
 
 #Continuously maintain a constant distance from object until user quits program     
-def followrl(distf,distr,distl):
+def followrl(distf, distr, distl):
     y = 1
     while True:
-        if distf > 20 and distr > 50 and distl > 50 and getTemp()>28 :
+        if distf > 20 and distr > 50 and distl > 50 and getTemp() > 28 :
             robot.forward(150)
             print("FORWARD")
         elif distr < 50 and distr > 4 and distf > 10:
@@ -94,15 +94,15 @@ def followrl(distf,distr,distl):
         else:
             robot.stop()
             print("STOP")
-        distf, distr,distl  = 0,0,0
+        distf, distr, distl = 0, 0, 0
         for x in range(y):
-            distf =(distf + distance(TRIGF, ECHOF))/y
-            distr =(distr + distance(TRIGR, ECHOR))/y
-            distl =(distl + distance(TRIGL, ECHOL))/y
-        print("FORWARD DISTANCE:  %.1f cm \t RIGHT DISTANCE: %.1f cm \t LEFT DISTANCE: %.1f cm"  %(distf ,distr, distl) )       
-        distf =(distf + distance(TRIGF, ECHOF))
-        distr =(distr + distance(TRIGR, ECHOR))
-        distl =(distl + distance(TRIGL, ECHOL))
+            distf = (distf + distance(TRIGF, ECHOF))/y
+            distr = (distr + distance(TRIGR, ECHOR))/y
+            distl = (distl + distance(TRIGL, ECHOL))/y
+        print("FORWARD DISTANCE:  %.1f cm \t RIGHT DISTANCE: %.1f cm \t LEFT DISTANCE: %.1f cm" % (distf, distr, distl))       
+        distf = (distf + distance(TRIGF, ECHOF))
+        distr = (distr + distance(TRIGR, ECHOR))
+        distl = (distl + distance(TRIGL, ECHOL))
         
 
 
@@ -112,16 +112,16 @@ if __name__ == '__main__':
     try:
         print("Measuring")
         dist = distance(TRIGF, ECHOF)
-        distr= distance(TRIGR, ECHOR)
+        distr = distance(TRIGR, ECHOR)
         distl = distance(TRIGL, ECHOL)
        #Measure distance but do not move until initialized
         human = getTemp()
         
-        while dist > 20 and human <  28:
+        while dist > 20 and human < 28:
             dist = distance(TRIGF, ECHOF)
-            distr= distance(TRIGR, ECHOR)   
+            distr = distance(TRIGR, ECHOR)   
             distl = distance(TRIGL, ECHOL)
-            print("FORWARD DISTANCE:  %.1f cm \t RIGHT DISTANCE: %.1f cm \t LEFT DISTANCE: %.1f cm"  %(dist ,distr, distl) )
+            print("FORWARD DISTANCE:  %.1f cm \t RIGHT DISTANCE: %.1f cm \t LEFT DISTANCE: %.1f cm" % (dist, distr, distl))
             human = getTemp()
             time.sleep(1)
 
