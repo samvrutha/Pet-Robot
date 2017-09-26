@@ -13,7 +13,7 @@ def follow(trig, echo):
                 robot.forward(150)
                 length = 0
                 for x in range(2):
-                    lengthf =(lengthf + distance(trig, echo))/2.0
+                    lengthf = (lengthf + distance(trig, echo))/2.0
                 print("ONWARD")
                 print(length)
                 time.sleep(.05)
