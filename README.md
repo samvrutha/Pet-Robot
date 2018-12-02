@@ -17,6 +17,12 @@ $ sudo python setup.py install
 For further instructions on downloading the motor shield and any necessary python dependencies see this website:  
 https://learn.adafruit.com/adafruit-dc-and-stepper-motor-hat-for-raspberry-pi/installing-software   
 
+The Adafruit library for the AMG88xx library should then be installed
+```bash
+$ cd ..
+$ git clone https://github.com/adafruit/Adafruit_AMG88xx.git
+```
+
 Next, install RPi.GPIO. ***NOTE:*** This library will only be able to properly install on a Raspberry Pi device.
 ```bash
 $ pip install RPi.GPIO
