@@ -12,7 +12,7 @@ Next, install the Adafruit library for the motor-shield.
 ```bash
 $ git clone https://github.com/adafruit/Adafruit-Motor-HAT-Python-Library.git
 $ cd Adafruit-Motor-HAT-Python-Library
-$ sudo python setup.py install
+$ sudo python3 setup.py install
 ```
 For further instructions on downloading the motor shield and any necessary python dependencies see this website:  
 https://learn.adafruit.com/adafruit-dc-and-stepper-motor-hat-for-raspberry-pi/installing-software   
@@ -32,4 +32,6 @@ Then install the AMG88xx library using.
  ```bash
  $ sudo pip3 install adafruit-circuitpython-amg88xx
  ```
+ 
+ 
 # Hardware Setup
