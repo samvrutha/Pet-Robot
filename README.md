@@ -28,6 +28,8 @@ $ pip3 install adafruit-blinka
 
 Then install the AMG88xx library using. 
 ***NOTE*** CircuitPython is not supported on Python 2
+
  ```bash
  $ sudo pip3 install adafruit-circuitpython-amg88xx
+ ```
 # Hardware Setup
