@@ -21,7 +21,6 @@ Next you will need to install CircuitPython in order to properly use the AMG88xx
 https://learn.adafruit.com/circuitpython-on-raspberrypi-linux/installing-circuitpython-on-raspberry-pi
 
 Make sure to install RPi.GPIO and adafruit-blinka
-Next, install RPi.GPIO. ***NOTE:*** This library will only be able to properly install on a Raspberry Pi device.
 ```bash
 $ pip3 install RPi.GPIO
 $ pip3 install adafruit-blinka
